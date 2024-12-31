@@ -11,6 +11,13 @@ const config: Config = {
     colors: {
       'white': '#ffffff'
     },
+    keyframes: {
+      shimmer: {
+        '100%': {
+          transform: 'translateX(100%)',
+        },
+      },
+    },
     extend: {
       colors: {
         ...colors,

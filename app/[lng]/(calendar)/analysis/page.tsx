@@ -1,41 +1,16 @@
-"use client";
+import { Suspense } from 'react';
+import { CompactCalendarHandler } from '@/app/ui/shared-components';
+import { AnalysisPageSkeleton } from '@/app/ui/skeletons';
 
-import { useTranslation } from '@/app/lib/i18n/client';
-import { useDispatch, useSelector } from 'react-redux';
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import { calendarActions, refreshActions } from '@/app/lib/redux';
-import { format } from 'date-fns'
-
-import React, { useState } from 'react';
-
-export default function Index({ params: { lng }} : any) {
-    const { t } = useTranslation(lng, 'main');
-    const dispatch = useDispatch();
-    const { selectedDateStr } = useSelector((state:any) => state.calendar);
-
-
-    const handleDatesSet = (arg: any) => {      
-        const calendarApi = arg.view.calendar;
-        const currentDate = calendarApi.getDate();
-    
-        // Selected Month, need to store it globally.
-        dispatch(calendarActions.setSelectedDateStr(format(currentDate, 'yyyy-MM-dd')));
-    };
+export default async function Page() {
     return (<>
-    <div className="full-calendar-custom-style full-calendar-hide">
-        <FullCalendar 
-            plugins={[dayGridPlugin]}
-            datesSet={handleDatesSet} // to handle pre / next on headerTool bar event.
-            initialDate={selectedDateStr || null}
-            headerToolbar={{
-                left: 'prev',
-                center: 'title today',
-                right: 'next'
-            }}
-         />
-    </div>
-       Coming soon
+      <div className="analysis-page-wrapper">
+        <CompactCalendarHandler />
+            <Suspense fallback={<div>Skeleton loading..</div>}>
+                Analysis Charts
+            </Suspense>
+      </div>
     </>
     );
-}
+  }
+  
