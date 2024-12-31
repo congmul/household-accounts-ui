@@ -23,7 +23,7 @@ export default function Index({ params: { lng }} : any) {
         dispatch(calendarActions.setSelectedDateStr(format(currentDate, 'yyyy-MM-dd')));
     };
     return (<>
-    <div className="budget-page-wrapper">
+    <div className="full-calendar-custom-style full-calendar-hide">
         <FullCalendar 
             plugins={[dayGridPlugin]}
             datesSet={handleDatesSet} // to handle pre / next on headerTool bar event.
