@@ -65,8 +65,8 @@ export default function Index({ params: { lng }} : any) {
               throw new Error("Userinfo is not correct.")
             }
             const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
-            const prevMonth = parseInt(month) - 1;
-            const transactionRes = await transactionService.getIncomeByUserId(userInfo._id, year, prevMonth.toString(), "date");
+            const prevMonth = parseInt(month) - 1 === 0 ? 12 : parseInt(month) - 1;
+            const transactionRes = await transactionService.getIncomeByUserId(userInfo._id, `${prevMonth === 12 ? parseInt(year) - 1 : year}`, prevMonth.toString(), "date");
             const investmentRes = await transactionService.getInvestmentsByUserId(userInfo._id, year, month, "date");
             const budget = await budgetService.getByUserId(userInfo._id, year, month);
             const categories = await categoryService.getByUserId(userInfo._id, 'expense');
@@ -101,8 +101,8 @@ export default function Index({ params: { lng }} : any) {
           throw new Error("Userinfo is not correct.")
         }
         const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
-        const prevMonth = parseInt(month) - 1;
-        const income = await transactionService.getIncomeByUserId(userInfo._id, year, `${prevMonth}`);
+        const prevMonth = parseInt(month) - 1 === 0 ? 12 : parseInt(month) - 1;
+        const income = await transactionService.getIncomeByUserId(userInfo._id, `${prevMonth === 12 ? parseInt(year) - 1 : year}`, `${prevMonth}`);
         if(income) buildPreviousIncomTableData(income as TransactionItems[]);
     }
 
