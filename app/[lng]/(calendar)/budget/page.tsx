@@ -38,7 +38,15 @@ export default function Index({ params: { lng }} : any) {
     useEffect(() => {
         if(!isBudgetPageRefresh) return;
         if(selectedDateStr === "") return;
-        init(selectedDateStr);
+        if(activeTab === 1){
+            // Build Table data for investment tab
+            getInvestmentsData();
+        }else if(activeTab === 2){
+            // Build Table data for previous month income
+            previousIncomeData();
+        }else {
+            init(selectedDateStr);
+        }
         dispatch(refreshActions.setIsBudgetPageRefresh(false));
       }, [isBudgetPageRefresh]);
 

@@ -147,7 +147,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
         }
     }
 
-    async function saveNewExpense() {
+    async function saveNewTransition() {
         try{
             setIsSaving(true);
             if(userInfo === ""){
@@ -244,7 +244,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                         <Spinner color="white" />
                     </div>
                     :
-                    <div onClick={() => isAbleToSave && saveNewExpense()} className={`text-white p-2 px-3 cursor-pointer flex-1 text-right ${!isAbleToSave && 'opacity-50 cursor-not-allowed'}`}>
+                    <div onClick={() => isAbleToSave && saveNewTransition()} className={`text-white p-2 px-3 cursor-pointer flex-1 text-right ${!isAbleToSave && 'opacity-50 cursor-not-allowed'}`}>
                         {t('slide-menu.save')}
                     </div>
                 }
