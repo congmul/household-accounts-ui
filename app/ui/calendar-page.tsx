@@ -130,6 +130,7 @@ export const CalendarPage = ({ lng }: { lng: string }) => {
     <div className="full-calendar-custom-style">
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
+        initialDate={selectedDateStr || null}
         dateClick={handleDateClick}
         datesSet={handleDatesSet} // to handle pre / next on headerTool bar event.
         initialView='dayGridMonth'

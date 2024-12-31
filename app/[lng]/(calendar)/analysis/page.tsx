@@ -27,6 +27,7 @@ export default function Index({ params: { lng }} : any) {
         <FullCalendar 
             plugins={[dayGridPlugin]}
             datesSet={handleDatesSet} // to handle pre / next on headerTool bar event.
+            initialDate={selectedDateStr || null}
             headerToolbar={{
                 left: 'prev',
                 center: 'title today',

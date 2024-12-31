@@ -241,6 +241,7 @@ export default function Index({ params: { lng }} : any) {
     <div className="full-calendar-custom-style full-calendar-hide">
         <FullCalendar 
             plugins={[dayGridPlugin]}
+            initialDate={selectedDateStr || null}
             datesSet={handleDatesSet} // to handle pre / next on headerTool bar event.
             headerToolbar={{
                 left: 'prev',
