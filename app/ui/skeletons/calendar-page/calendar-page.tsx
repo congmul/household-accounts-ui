@@ -4,6 +4,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import { useSelector } from 'react-redux';
 import { ExpenseCardSkeleton } from './expense-card';
+import { HeaderExpenseCard } from './header-expense-card';
 
 // Loading animation
 const shimmer =
@@ -32,20 +33,7 @@ export function CalendarPageSkeleton() {
         </div>
         <div className="relative">
             <div className={`${shimmer} relative flex flex-col list-of-expenses p-4 h-[39vh]`}>
-                <div className="flex justify-between mb-4">
-                    <div className="flex flex-col items-center">
-                        <div className="h-[24px] w-[75px] rounded-md bg-gray-200 text-sm font-medium" />
-                        <div className="my-2 h-[24px] w-[85px] rounded-md bg-gray-200 text-sm font-medium" />
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <div className="h-[24px] w-[95px] rounded-md bg-gray-200 text-sm font-medium" />
-                        <div className="my-2 h-[24px] w-[110px] rounded-md bg-gray-200 text-sm font-medium" />
-                    </div>
-                    <div className="flex flex-col items-center">
-                        <div className="h-[24px] w-[95px] rounded-md bg-gray-200 text-sm font-medium" />
-                        <div className="my-2 h-[24px] w-[110px] rounded-md bg-gray-200 text-sm font-medium" />
-                    </div>
-                </div>
+                <HeaderExpenseCard />
                 <ExpenseCardSkeleton />
                 <ExpenseCardSkeleton />
                 <ExpenseCardSkeleton />

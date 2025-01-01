@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { CompactCalendarHandler } from '@/app/ui/shared-components';
-import { AnalysisPageSkeleton } from '@/app/ui/skeletons';
 
 export default async function Page({ params: { lng } } : { params: { lng : string }}) {
     return (<>
