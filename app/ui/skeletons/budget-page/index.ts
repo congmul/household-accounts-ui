@@ -1,0 +1,1 @@
+export { BudgetPageSkeleton } from './budget-page';
