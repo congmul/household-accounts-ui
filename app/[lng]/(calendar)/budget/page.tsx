@@ -38,7 +38,15 @@ export default function Index({ params: { lng }} : any) {
     useEffect(() => {
         if(!isBudgetPageRefresh) return;
         if(selectedDateStr === "") return;
-        init(selectedDateStr);
+        if(activeTab === 1){
+            // Build Table data for investment tab
+            getInvestmentsData();
+        }else if(activeTab === 2){
+            // Build Table data for previous month income
+            previousIncomeData();
+        }else {
+            init(selectedDateStr);
+        }
         dispatch(refreshActions.setIsBudgetPageRefresh(false));
       }, [isBudgetPageRefresh]);
 
@@ -233,6 +241,7 @@ export default function Index({ params: { lng }} : any) {
     <div className="full-calendar-custom-style full-calendar-hide">
         <FullCalendar 
             plugins={[dayGridPlugin]}
+            initialDate={selectedDateStr || null}
             datesSet={handleDatesSet} // to handle pre / next on headerTool bar event.
             headerToolbar={{
                 left: 'prev',

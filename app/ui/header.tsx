@@ -28,7 +28,8 @@ export const Header = ({ lng }: { lng: string }) => {
   }, [pathname]);
 
   return (
-    <div className="header flex justify-around items-center bg-red-300 text-white">
-      {t(`${pageName}.header.title`)}
-  </div>)
+    <div className="header flex justify-around items-center bg-red-300 text-white h-[70px]">
+      {pageName === 'settings' && t(`${pageName}.header.title`)}
+    </div>
+  )
 }
