@@ -7,16 +7,16 @@ export function HeaderBudgetListSkeleton() {
     <div className="relative">
         <div className={`${shimmer} flex justify-between mb-4`}>
             <div className="flex flex-col items-center">
-                <div className="h-[24px] w-[125px] rounded-md bg-gray-200 text-sm font-medium" />
-                <div className="my-1 h-[24px] w-[125px] rounded-md bg-gray-200 text-sm font-medium" />
+                <div className="h-[24px] w-[100px] rounded-md bg-gray-200 text-sm font-medium" />
+                <div className="my-1 h-[24px] w-[100px] rounded-md bg-gray-200 text-sm font-medium" />
             </div>
             <div className="flex flex-col items-center">
                 <div className="h-[24px] w-[65px] rounded-md bg-gray-200 text-sm font-medium" />
-                <div className="my-1 h-[24px] w-[125px] rounded-md bg-gray-200 text-sm font-medium" />
+                <div className="my-1 h-[24px] w-[100px] rounded-md bg-gray-200 text-sm font-medium" />
             </div>
             <div className="flex flex-col items-center">
                 <div className="h-[24px] w-[65px] rounded-md bg-gray-200 text-sm font-medium" />
-                <div className="my-1 h-[24px] w-[125px] rounded-md bg-gray-200 text-sm font-medium" />
+                <div className="my-1 h-[24px] w-[100px] rounded-md bg-gray-200 text-sm font-medium" />
             </div>
         </div>
     </div>
