@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslation } from '@/app/lib/i18n/client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { transactionService, budgetService, categoryService } from '@/app/lib/api-services';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
@@ -11,9 +11,11 @@ import { formatCurrency } from '@/app/lib/utils';
 import { Budget, BudgetItem, Category, Transaction, TransactionItems } from '@/app/lib/models';
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 import { EditSlideMenu } from './edit-slide-menu';
+import { HeaderBudgetListSkeleton, TabMenuBudgetListSkeleton } from '../skeletons/budget-page';
 
 export function BudgetPage({ lng } : { lng: string }) {
     const { t } = useTranslation(lng, 'main');
+    const [ isPending, startTransition] = useTransition();
     const dispatch = useDispatch();
     const { selectedDateStr } = useSelector((state:any) => state.calendar);
     const { isBudgetPageRefresh } = useSelector((state:any) => state.refresh);
@@ -67,26 +69,28 @@ export function BudgetPage({ lng } : { lng: string }) {
             if(userInfo === ""){
               throw new Error("Userinfo is not correct.")
             }
-            const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
-            const prevMonth = parseInt(month) - 1 === 0 ? 12 : parseInt(month) - 1;
-            const transactionRes = await transactionService.getIncomeByUserId(userInfo._id, `${prevMonth === 12 ? parseInt(year) - 1 : year}`, prevMonth.toString(), "date");
-            const investmentRes = await transactionService.getInvestmentsByUserId(userInfo._id, year, month, "date");
-            const budget = await budgetService.getByUserId(userInfo._id, year, month);
-            const categories = await categoryService.getByUserId(userInfo._id, 'expense');
-            setBudget(budget);
-
-            let totalAmount = 0;
-            (transactionRes as Transaction[])?.forEach(transaction => totalAmount += transaction.totalAmount);
-            setTotalIncome(totalAmount);
-
-            let totalAmountOfInvest = 0;
-            (investmentRes as Transaction[])?.forEach(transaction => totalAmountOfInvest += transaction.totalAmount);
-            setTotalInvestments(totalAmountOfInvest);
-
-            const expenses = await transactionService.getExpenseByUserId(userInfo._id, year, month, "category");
-            if(categories && budget && expenses){
-                buildTableData(categories, budget.budgets || [], expenses);
-            }
+            startTransition(async () => {            
+                const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
+                const prevMonth = parseInt(month) - 1 === 0 ? 12 : parseInt(month) - 1;
+                const transactionRes = await transactionService.getIncomeByUserId(userInfo._id, `${prevMonth === 12 ? parseInt(year) - 1 : year}`, prevMonth.toString(), "date");
+                const investmentRes = await transactionService.getInvestmentsByUserId(userInfo._id, year, month, "date");
+                const budget = await budgetService.getByUserId(userInfo._id, year, month);
+                const categories = await categoryService.getByUserId(userInfo._id, 'expense');
+                setBudget(budget);
+    
+                let totalAmount = 0;
+                (transactionRes as Transaction[])?.forEach(transaction => totalAmount += transaction.totalAmount);
+                setTotalIncome(totalAmount);
+    
+                let totalAmountOfInvest = 0;
+                (investmentRes as Transaction[])?.forEach(transaction => totalAmountOfInvest += transaction.totalAmount);
+                setTotalInvestments(totalAmountOfInvest);
+    
+                const expenses = await transactionService.getExpenseByUserId(userInfo._id, year, month, "category");
+                if(categories && budget && expenses){
+                    buildTableData(categories, budget.budgets || [], expenses);
+                }
+            })
         }catch(err){
             console.log(err);
         }
@@ -226,37 +230,46 @@ export function BudgetPage({ lng } : { lng: string }) {
 
     return (<>
     <div className="flex flex-col list-of-budgets p-4">
-       <div className="flex justify-between mb-4">
-            <div className="text-center">
-                <p>{`${t('general.income')} (${t('general.last_month')})`}</p>
-                <p className="text-green-500 font-bold">${formatCurrency(totalIncome)}</p>
-            </div>
-            <div className="text-center">
-                <p>{t('general.budget')}</p>
-                <p className="text-red-500 font-bold">${formatCurrency(budget?.totalAmount || 0)}</p>
-            </div>
-            <div className="text-center">
-                <p>{t('general.balance')}</p>
-                <p className="text-blue-500 font-bold">{calBalance(totalIncome, (budget?.totalAmount || 0) + totalInvestments)}</p>
-            </div>
-        </div>
-        <div className='tabs-menu'>
-            <Tabs activeTab={activeTab} setActiveTab={setActiveTab}>
-                <Tab label={t("general.expense")}>
-                    <Table 
-                        columns={[`${t('general.category')}`, `${t('general.budget')}`, `${t('general.expense')}`, `${t('general.difference')}`]} 
-                        data={tableData} 
-                        total={tableTotalData}
-                    />
-                </Tab>
-                <Tab label={t("general.investment")}>
-                    <Table columns={[`${t('general.date')}`, `${t('general.category')}`,`${t('general.investment')}`]} data={investmentsData} />
-                </Tab>
-                <Tab label={t("general.last_month_income")}>
-                    <Table columns={[`${t('general.date')}`, `${t('general.category')}`,`${t('general.income')}`]} data={previousIncomeTableData} />
-                </Tab>
-            </Tabs>
-        </div>
+        {
+            !isPending
+            ?<>
+                <div className="flex justify-between mb-4">
+                    <div className="text-center">
+                        <p>{`${t('general.income')} (${t('general.last_month')})`}</p>
+                        <p className="text-green-500 font-bold">${formatCurrency(totalIncome)}</p>
+                    </div>
+                    <div className="text-center">
+                        <p>{t('general.budget')}</p>
+                        <p className="text-red-500 font-bold">${formatCurrency(budget?.totalAmount || 0)}</p>
+                    </div>
+                    <div className="text-center">
+                        <p>{t('general.balance')}</p>
+                        <p className="text-blue-500 font-bold">{calBalance(totalIncome, (budget?.totalAmount || 0) + totalInvestments)}</p>
+                    </div>
+                </div>
+                <div className='tabs-menu'>
+                    <Tabs activeTab={activeTab} setActiveTab={setActiveTab}>
+                        <Tab label={t("general.expense")}>
+                            <Table 
+                                columns={[`${t('general.category')}`, `${t('general.budget')}`, `${t('general.expense')}`, `${t('general.difference')}`]} 
+                                data={tableData} 
+                                total={tableTotalData}
+                            />
+                        </Tab>
+                        <Tab label={t("general.investment")}>
+                            <Table columns={[`${t('general.date')}`, `${t('general.category')}`,`${t('general.investment')}`]} data={investmentsData} />
+                        </Tab>
+                        <Tab label={t("general.last_month_income")}>
+                            <Table columns={[`${t('general.date')}`, `${t('general.category')}`,`${t('general.income')}`]} data={previousIncomeTableData} />
+                        </Tab>
+                    </Tabs>
+                </div>
+            </>
+            :<>
+                <HeaderBudgetListSkeleton />
+                <TabMenuBudgetListSkeleton />
+            </>
+        }
     </div>
     <EditSlideMenu lng={lng} isOpen={isOpenSlide} close={() => setIsOpenSlide(false)} 
         selectedItem={selectedItem} activeTab={activeTab}
