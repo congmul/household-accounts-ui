@@ -1,13 +1,13 @@
 "use client"
 
 import { useTranslation } from '@/app/lib/i18n/client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { MSLoginButton, GoogleLoginButton, GuestLoginButton } from '@/app/ui/shared-components';
 import { Button, Input } from 'react-component-tailwindcss';
 import img from '/public/assets/icons/icon-72x72.png';
 import Image from 'next/image';
-import { userService } from '@/app/lib/api-services';
+import { userService, healthService } from '@/app/lib/api-services';
 import { useCookies } from 'react-cookie'
 
 export default function Index({ params: { lng }} : any) {
@@ -17,6 +17,13 @@ export default function Index({ params: { lng }} : any) {
     const [password, setPassword] = useState('');
     const [_, setCookie] = useCookies(["userInfo"])
     const [ isLoggingin, setIsLoggingin ] = useState(false);
+
+    // Wake-up account-sevice & core-service
+    useEffect(() => {
+      healthService.accountHealth()
+      healthService.coreHealth()
+    }, [])
+
     const handleSubmit = async (e:any) => {
       try{
         e.preventDefault();
