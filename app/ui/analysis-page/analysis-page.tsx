@@ -16,7 +16,6 @@ export function AnalysisPage({ lng } : { lng: string }) {
     const [ expenses, setExpenses ] = useState<Transaction[] | undefined>();
 
     useEffect(() => {
-        console.log(selectedDateStr)
         if(!selectedDateStr) return;
         init(selectedDateStr);
     }, [selectedDateStr]);
@@ -50,11 +49,11 @@ export function AnalysisPage({ lng } : { lng: string }) {
                 : expenses && expenses.length > 0
                     ? expenses.map(expense => {
                         const totalByCategory = totalAmountByCategory(expense.transactions);
-                        return(<div className="mb-3">
+                        return(<div key={expense._id} className="mb-3">
                             <div>{expense._id} - ${formatCurrency(expense.totalAmount)}</div>
                             {
                                 Object.entries(totalByCategory).map(item => {
-                                    return (<div className="ms-3">{item[0]} - ${formatCurrency(item[1])}</div>)
+                                    return (<div key={item[0]} className="ms-3">{item[0]} - ${formatCurrency(item[1])}</div>)
                                 })
                             }
                         </div>)
