@@ -42,7 +42,7 @@ export function AnalysisPage({ lng } : { lng: string }) {
         }, {} as Record<string, number>);
         return totalByCategory
     }
-    return(<div className="analysis-page flex flex-col p-4">
+    return(<div className="analysis-page-wrapper flex flex-col p-4">
         {
             isPending 
                 ? <div>Loading...</div>
