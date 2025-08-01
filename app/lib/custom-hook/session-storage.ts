@@ -5,7 +5,7 @@ export function useSessionStorageState(
     { serialize = JSON.stringify, deserialize = JSON.parse } = {}    // Destructuring object and assign default value.
     ) {
     const [ state, setState ] = useState(() => {                    // Lazy useState
-        const localStorageValue = window.sessionStorage.getItem(key);
+        const localStorageValue = typeof window !== "undefined" ? window.sessionStorage.getItem(key) : null;
         if(localStorageValue){
             try{
                 return deserialize(localStorageValue);
