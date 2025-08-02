@@ -1,6 +1,6 @@
 import { LanguageSelector, LogoutButton } from '@/app/ui/settings-page'
 
-export default async function Page({ params } : { params: { lng : string }}) {    
+export default async function Page({ params } : { params: Promise<{ lng: string }> }) {    
     const { lng } = await params;
     return (<>
         <div className="p-4 bg-white text-2xl">

@@ -10,7 +10,8 @@ import Image from 'next/image';
 import { userService, healthService } from '@/app/lib/api-services';
 import { useCookies } from 'react-cookie'
 
-export default function Index({ params: { lng }} : { params: { lng: string } }) {
+export default function Index({ params } : { params: Promise<{ lng: string }> }) {
+    const { lng } = React.use(params);
     const { t } = useTranslation(lng, 'main');
     const router = useRouter()
     const [email, setEmail] = useState('');
