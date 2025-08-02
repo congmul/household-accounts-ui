@@ -2,7 +2,8 @@ import { Suspense } from 'react';
 import { CompactCalendarHandler } from '@/app/ui/shared-components';
 import { AnalysisPage } from '@/app/ui/analysis-page';
 
-export default async function Page({ params: { lng } } : { params: { lng : string }}) {
+export default async function Page({ params } : { params: Promise<{ lng: string }> }) {
+  const { lng } = await params;
     return (<>
       <div className="analysis-page-wrapper">
         <CompactCalendarHandler />

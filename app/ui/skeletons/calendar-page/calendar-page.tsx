@@ -25,14 +25,14 @@ export function CalendarPageSkeleton() {
                     center: 'title today',
                     right: 'next'
                 }}
-                height={"43vh"}
+                height={"44vh"}
                 selectable={true}
                 dayMaxEvents={true}
                 fixedWeekCount={false}
             />
         </div>
         <div className="relative">
-            <div className={`${shimmer} relative flex flex-col list-of-expenses p-4 h-[39vh]`}>
+            <div className={`${shimmer} relative flex flex-col list-of-expenses p-4 h-[38vh]`}>
                 <HeaderExpenseCard />
                 <ExpenseCardSkeleton />
                 <ExpenseCardSkeleton />
