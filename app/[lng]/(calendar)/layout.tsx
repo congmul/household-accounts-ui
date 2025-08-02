@@ -32,13 +32,12 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({
   children,
-  params: {
-    lng
-  }
+  params
 }: Readonly<{
   children: React.ReactNode;
   params: {lng: string}
 }>) {
+  const { lng } = await params;
   return (
     <html lang={lng}>      
       <body data-bs-theme="light" className={dongle.className}>
