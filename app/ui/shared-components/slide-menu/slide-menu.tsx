@@ -43,7 +43,7 @@ const SlideMenu: React.FC<SlideMenuType> = ({isOpen, close, position = 'left', w
     <>
       <div
            className={classNames(
-            'slide-menu-wrapper fixed transition-transform transform z-10',
+            'slide-menu-wrapper fixed z-10',
             {
               'inset-y-0 left-0': position === 'left',
               'inset-y-0 right-0': position === 'right',

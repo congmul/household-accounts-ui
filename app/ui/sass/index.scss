@@ -1,22 +1,25 @@
+@use "./normalize";
+@use "./variables";
+@use "./mixins";
+
+@use "./components/header";
+@use "./components/footer";
+@use "./components/slide-menu";
+@use "./components/full-calendar-style";
+@use "./components/calendar-page";
+@use "./components/add-new-item";
+@use "./components/budget-page";
+@use "./components/analysis-page";
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "./normalize";
-@import "./variables";
-@import "./mixins";
-@include export-to-css-vars($colors);
-@include export-to-css-vars-dark($colors-dark);
+@import 'tailwindcss';
 @import "react-component-tailwindcss/dist/index.css";
-
-@import "./components/header";
-@import "./components/footer";
-@import "./components/slide-menu";
-@import "./components/full-calendar-style";
-@import "./components/calendar-page";
-@import "./components/add-new-item";
-@import "./components/budget-page";
-@import "./components/analysis-page";
+@include mixins.export-to-css-vars(variables.$colors);
+@include mixins.export-to-css-vars-dark(variables.$colors-dark);
 
 body{
     height: 100dvh;
