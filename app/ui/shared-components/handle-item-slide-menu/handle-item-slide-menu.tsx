@@ -528,21 +528,21 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                 </div>
                                 <RadioButton 
                                     label={t('general.delete_repeat_option.this_expense')}
-                                    name="deleteOption"
+                                    name="deleteFixedExpenseRadioOption"
                                     value="only_one"
                                     checked={deleteOption === 'only_one'}
                                     onChange={(event: any) => setDeleteOption(event.target.value)}
                                 />
                                 <RadioButton 
                                     label={t('general.delete_repeat_option.this_and_following')}
-                                    name="deleteOption"
+                                    name="deleteFixedExpenseRadioOption"
                                     value="following"
                                     checked={deleteOption === 'following'}
                                     onChange={(event: any) => setDeleteOption(event.target.value)}
                                 />
                                 <RadioButton 
                                     label={t('general.delete_repeat_option.all_expenses')}
-                                    name="deleteOption"
+                                    name="deleteFixedExpenseRadioOption"
                                     value="all"
                                     checked={deleteOption === 'all'}
                                     onChange={(event: any) => setDeleteOption(event.target.value)}

@@ -1,7 +1,3 @@
-'use client';
-
-import React, { useEffect } from 'react';
-
 interface RadioButtonType {
     label:string,
     name:string, 
@@ -9,7 +5,7 @@ interface RadioButtonType {
     checked:boolean, 
     onChange: (e:any) => void,
 }
-const RadioButton:React.FC<RadioButtonType> = ({ label, name, value, checked, onChange, ...rest }) => {
+const RadioButton:React.FC<RadioButtonType> = ({ label, name, value, checked, onChange }) => {
   return (<>
     <label
       className="flex items-center space-x-2"
@@ -18,6 +14,7 @@ const RadioButton:React.FC<RadioButtonType> = ({ label, name, value, checked, on
         type="radio"
         name={name}
         value={value}
+        checked={checked}
         onChange={onChange}
         className="form-radio text-blue-500 h-5 w-5 cursor-pointer"
       />
