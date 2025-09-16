@@ -33,6 +33,7 @@
     "react-component-tailwindcss": "^0.0.3-a.18",
     "react-cookie": "^7.2.2",
     "react-dom": "^18",
+    "react-hook-form": "^7.62.0",
     "react-i18next": "^15.6.1",
     "react-redux": "^9.2.0",
     "sass": "^1.89.2",
