@@ -19,7 +19,7 @@ export const Header = ({ lng }: { lng: string }) => {
   const [ userInfo, _ ] = useSessionStorageState("userInfo");
   const [ __, setCookie, removeCookie] = useCookies(["userInfo"])
   const dispatch = useDispatch();
-  const { defaultAccountBook } = useSelector((state: RootState) => state.accountBook);
+  const { accountBooks, defaultAccountBook } = useSelector((state: RootState) => state.accountBook);
 
   useEffect(() => {
     const pathNameArr = pathname.split('/');
@@ -47,7 +47,7 @@ export const Header = ({ lng }: { lng: string }) => {
     <div className="header flex justify-around items-center bg-red-300 text-white h-[70px]">
       {pageName === 'settings' && t(`${pageName}.header.title`)}
     </div>
-    { defaultAccountBook == null && <AccountBookForm isOpen={true} close={() => {}} /> }
+    { accountBooks?.length === 0 && defaultAccountBook == null  && <AccountBookForm isOpen={true} close={() => {}} /> }
   </>
   )
 }
