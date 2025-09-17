@@ -45,6 +45,7 @@ const AccountBookForm: React.FC<AccountBookFormProps> = ({ isFirstTime, isOpen, 
             console.log(err)
         }finally{
             setIsLoading(false);
+            close();
         }
         console.log(inputData)
     }
@@ -96,7 +97,10 @@ const AccountBookForm: React.FC<AccountBookFormProps> = ({ isFirstTime, isOpen, 
                         />
                         {/* errors will return when field validation fails  */}
                         {errors.name && <span>This field is required</span>}
-                        <Button type="submit" color="pink" loading={isLoading} className="mt-4 p-2 text-white rounded" >Create</Button>
+                        <div className='flex space-x-2'>
+                            <Button type="submit" color="pink" loading={isLoading}>Create</Button>
+                            { !isFirstTime && <Button variant="secondary" color="pink" onClick={() => close()} className="ml-2">Close</Button>}
+                        </div>
                     </form>
                 </div>
             </div>

@@ -19,4 +19,12 @@ export const accountBookService = {
             console.log(err);
         }
     },
+    setDefaultAccountBook: async (accountBookId: string, userId: string):Promise<AccountBookWithMember | undefined> => {
+        try{
+            const { data } = await axios.patch(`${coreServiceUrl}/account-book/set-default/${userId}/${accountBookId}`);            
+            return data;            
+        }catch(err){
+            console.log(err);
+        }
+    }
 }
