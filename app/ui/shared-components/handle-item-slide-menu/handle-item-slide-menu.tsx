@@ -15,6 +15,7 @@ import { RadioButton } from '@/app/ui/shared-components';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
 import classNames from 'classnames';
 import { formatCurrency } from '@/app/lib/utils';
+import { RootState } from '@/app/lib/redux/store';
 
 
 interface HandleItemSlideMenuType {
@@ -40,6 +41,7 @@ interface HandleItemSlideMenuType {
 export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, close, lng, selectedItem, triggerRefresh }) => {
     const { t } = useTranslation(lng, 'main');
     const { isHandleItemSlideRefresh } = useSelector((state:any) => state.refresh);
+    const { defaultAccountBook } = useSelector((state: RootState) => state.accountBook);
     const reduxDispatch = useDispatch();
     const { 
         date, amount, categories, category, subcategory, type, note, isSaving, isAbleToSave, pending, fixedExpenseMonthly, endDate,
@@ -48,7 +50,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
      const [ input, setInput ] = useState<string>('');
      const [dropdownList, setDropdownList] = useState<{value:string, label:string}[]>([]);
      const [subcategoryDropdownList, setSubcategoryDropdownList] = useState<{value:string, label:string}[]>([]);
-     const [newCategory, setNewCategory] = useState<{name: string, type: string}>({name: "", type: "expense"});
+     const [newCategory, setNewCategory] = useState<{name: string, type: string, accountBookId: string}>({name: "", type: "expense", accountBookId: defaultAccountBook?.accountBookId._id || ""});
      const [ isOpenNewCategory, setIsOpenNewCategory ] = useState(false);
      const [ isSavingNewCategory, setIsSavingNewCategory ] = useState(false);
      const [ newSubcategory, setNewSubcategory] = useState<{name: string}>({name: ""});
@@ -114,6 +116,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             const subTempCategories:{value:string, label:string}[] = [];
             category.subcategories?.forEach(category => subTempCategories.push({value: category.name, label: category.name}));                                    
             setSubcategoryDropdownList(subTempCategories);
+            setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
         }
     }, [category])
 
@@ -122,7 +125,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             if(userInfo === ""){
                 throw new Error("Userinfo Not Found")
             }
-            const categoriesRes = await categoryService.getByUserId(userInfo._id, type); 
+            const categoriesRes = await categoryService.getByUserId(userInfo._id, defaultAccountBook?.accountBookId._id || "", type); 
             if(categoriesRes) {
                 setCategories(categoriesRes)
                 // If there is selectedItem, then we don't need to set category again.
@@ -141,6 +144,10 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                 const subTempCategories:{value:string, label:string}[] = [];
                 selectedCategory && selectedCategory.subcategories.forEach((category: any) => subTempCategories.push({value: category.name, label: category.name}));
                 setSubcategoryDropdownList(subTempCategories);
+
+                if(defaultAccountBook){
+                    setNewCategory({...newCategory, accountBookId: defaultAccountBook.accountBookId._id})
+                }
             }
         }catch(err){
             console.log(err);
@@ -155,6 +162,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             }
             const addTransactionPayload:AddTransactionPayload = {                
                 userId: userInfo._id,
+                accountBookId: defaultAccountBook?.accountBookId._id || "", // Should be always there.
                 date,
                 amount,
                 category: category?.name || "",
@@ -169,7 +177,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             }
             if(selectedItem){
                 // Update Existing Item
-                const {userId, ...updateTransactionPayload } = addTransactionPayload;
+                const {userId, accountBookId, ...updateTransactionPayload } = addTransactionPayload;
                 const res = await transactionService.updateTransaction(selectedItem.id, updateTransactionPayload);
             }else{
                 // Create new Item

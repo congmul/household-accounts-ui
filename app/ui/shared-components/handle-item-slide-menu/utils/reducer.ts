@@ -161,7 +161,7 @@ export function useHandleItem() {
             payload: { category }
         })
     }
-    function setSubcategory(subcategory: BaseCategory) {
+    function setSubcategory(subcategory: BaseCategory | undefined) {
         dispatch({
             type: HandleItemAction.SUBCATEGORY,
             payload: { subcategory }

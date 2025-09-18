@@ -3,9 +3,9 @@ import { Category, CategoryPayload, SubcategoryPayload } from '@/app/lib/models'
 const coreServiceUrl = process.env.NEXT_PUBLIC_CORE_SERVICE_URL;
 
 export const categoryService = {
-    getByUserId: async (userId: string, type: string):Promise<Category[] | undefined> => {
+    getByUserId: async (userId: string, accountBookId:string, type: string):Promise<Category[] | undefined> => {
         try{
-            const { data } = await axios.get(`${coreServiceUrl}/category/${userId}/user?type=${type}`);
+            const { data } = await axios.get(`${coreServiceUrl}/category/${userId}/${accountBookId}/user?type=${type}`);
             return data;
         }catch(err){
 
