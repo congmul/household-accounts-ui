@@ -56,8 +56,14 @@ const AccountBookForm: React.FC<AccountBookFormProps> = ({ isFirstTime, isOpen, 
         const accountBook = accountBooks?.find((ab) => ab.isDefault === true) || null;
         dispatch(accountBookActions.setDefaultAccountBook(accountBook));
     }
+
+    function closeForm() {
+        setValue("name", "");
+        setValue("description", "");
+        close();
+    }
     return (
-        <SlideMenu isOpen={isOpen} close={close} position="bottom">
+        <SlideMenu isOpen={isOpen} close={closeForm} position="bottom">
             <div className="p-4">
                 {
                     isFirstTime 
@@ -99,7 +105,7 @@ const AccountBookForm: React.FC<AccountBookFormProps> = ({ isFirstTime, isOpen, 
                         {errors.name && <span>This field is required</span>}
                         <div className='flex space-x-2'>
                             <Button type="submit" color="pink" loading={isLoading}>Create</Button>
-                            { !isFirstTime && <Button variant="secondary" color="pink" onClick={() => close()} className="ml-2">Close</Button>}
+                            { !isFirstTime && <Button variant="secondary" color="pink" onClick={closeForm} className="ml-2">Close</Button>}
                         </div>
                     </form>
                 </div>
