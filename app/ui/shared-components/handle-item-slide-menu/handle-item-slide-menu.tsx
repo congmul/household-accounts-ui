@@ -476,7 +476,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                         </div>
                         {
                             // if this expense is pending, then we're not interested in fixedExpense.
-                            !pending &&
+                            !selectedItem && !pending &&
                             <div className="flex justify-between items-center border-b py-3">
                                 <span>{t('new_input.body.fixedExpense.name')}({t('general.monthly')})</span> 
                                 <ToggleButton initial={fixedExpenseMonthly} onToggle={(v) => setFixedExpenseMonthly(v)} />
@@ -497,6 +497,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                             <input
                                 type="date"
                                 value={endDate}
+                                disabled={selectedItem != null}
                                 onChange={(e) => {
                                     setEndDate(e.target.value);
                                 }}
