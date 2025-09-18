@@ -53,8 +53,8 @@ export default function Index({ params } : { params: Promise<{ lng: string }> })
     }
     return (<>
        
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-[25rem] p-8 space-y-4 bg-white rounded-md shadow-md">
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="w-[25rem] p-8 space-y-4 bg-white">
         <div className="flex flex-col items-center justify-center">
           <Image alt="logo" src={img} width={"72"} />
         </div>

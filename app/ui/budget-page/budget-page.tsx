@@ -8,16 +8,18 @@ import { useSessionStorageState } from '@/app/lib/custom-hook';
 import { refreshActions } from '@/app/lib/redux';
 import { Tabs, Tab, Table } from '@/app/ui/shared-components';
 import { formatCurrency } from '@/app/lib/utils';
-import { Budget, BudgetItem, Category, Transaction, TransactionItems } from '@/app/lib/models';
+import { AccountBookWithMember, Budget, BudgetItem, Category, Transaction, TransactionItems } from '@/app/lib/models';
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 import { EditSlideMenu } from './edit-slide-menu';
 import { HeaderBudgetListSkeleton, TabMenuBudgetListSkeleton } from '../skeletons/budget-page';
+import { RootState } from '@/app/lib/redux/store';
 
 export function BudgetPage({ lng } : { lng: string }) {
     const { t } = useTranslation(lng, 'main');
     const [ isPending, startTransition] = useTransition();
     const dispatch = useDispatch();
     const { selectedDateStr } = useSelector((state:any) => state.calendar);
+    const { defaultAccountBook } = useSelector((state:RootState) => state.accountBook);
     const { isBudgetPageRefresh } = useSelector((state:any) => state.refresh);
     const [ userInfo, _ ] = useSessionStorageState("userInfo", "");
     const [ totalIncome, setTotalIncome ] = useState(0);
@@ -35,7 +37,7 @@ export function BudgetPage({ lng } : { lng: string }) {
 
     useEffect(() => {
         if(!isBudgetPageRefresh) return;
-        if(selectedDateStr === "") return;
+        if(selectedDateStr === "" || !defaultAccountBook) return;
         if(activeTab === 1){
             // Build Table data for investment tab
             getInvestmentsData();
@@ -43,14 +45,14 @@ export function BudgetPage({ lng } : { lng: string }) {
             // Build Table data for previous month income
             previousIncomeData();
         }
-        init(selectedDateStr);
+        init(selectedDateStr, defaultAccountBook);
         dispatch(refreshActions.setIsBudgetPageRefresh(false));
       }, [isBudgetPageRefresh]);
 
     useEffect(() => {
-        if(selectedDateStr === "") return;
-        init(selectedDateStr);
-    }, [selectedDateStr])
+        if(selectedDateStr === "" || !defaultAccountBook) return;
+        init(selectedDateStr, defaultAccountBook);
+    }, [selectedDateStr, defaultAccountBook])
 
     useEffect(() => {
         if(activeTab === 1){
@@ -64,7 +66,7 @@ export function BudgetPage({ lng } : { lng: string }) {
         }
     }, [selectedDateStr, activeTab])
 
-    async function init(selectedDateStr:string) {
+    async function init(selectedDateStr:string, defaultAccountBook:AccountBookWithMember){
         try{
             if(userInfo === ""){
               throw new Error("Userinfo is not correct.")
@@ -72,10 +74,10 @@ export function BudgetPage({ lng } : { lng: string }) {
             startTransition(async () => {            
                 const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
                 const prevMonth = parseInt(month) - 1 === 0 ? 12 : parseInt(month) - 1;
-                const transactionRes = await transactionService.getIncomeByUserId(userInfo._id, `${prevMonth === 12 ? parseInt(year) - 1 : year}`, prevMonth.toString(), "date");
-                const investmentRes = await transactionService.getInvestmentsByUserId(userInfo._id, year, month, "date");
-                const budget = await budgetService.getByUserId(userInfo._id, year, month);
-                const categories = await categoryService.getByUserId(userInfo._id, 'expense');
+                const transactionRes = await transactionService.getIncomeByUserId(userInfo._id, defaultAccountBook.accountBookId._id, `${prevMonth === 12 ? parseInt(year) - 1 : year}`, prevMonth.toString(), "date");
+                const investmentRes = await transactionService.getInvestmentsByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month, "date");
+                const budget = await budgetService.getByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month);
+                const categories = await categoryService.getByUserId(userInfo._id, defaultAccountBook.accountBookId._id, 'expense');
                 setBudget(budget);
     
                 let totalAmount = 0;
@@ -86,7 +88,7 @@ export function BudgetPage({ lng } : { lng: string }) {
                 (investmentRes as Transaction[])?.forEach(transaction => totalAmountOfInvest += transaction.totalAmount);
                 setTotalInvestments(totalAmountOfInvest);
     
-                const expenses = await transactionService.getExpenseByUserId(userInfo._id, year, month, "category");
+                const expenses = await transactionService.getExpenseByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month, "category");
                 if(categories && budget && expenses){
                     buildTableData(categories, budget.budgets || [], expenses);
                 }
@@ -100,7 +102,7 @@ export function BudgetPage({ lng } : { lng: string }) {
           throw new Error("Userinfo is not correct.")
         }
         const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
-        const income = await transactionService.getInvestmentsByUserId(userInfo._id, year, month);
+        const income = await transactionService.getInvestmentsByUserId(userInfo._id, defaultAccountBook?.accountBookId._id || "", year, month);
         if(income) buildInvestmentsTableData(income as TransactionItems[]);
     }
     async function previousIncomeData() {
@@ -109,7 +111,7 @@ export function BudgetPage({ lng } : { lng: string }) {
         }
         const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
         const prevMonth = parseInt(month) - 1 === 0 ? 12 : parseInt(month) - 1;
-        const income = await transactionService.getIncomeByUserId(userInfo._id, `${prevMonth === 12 ? parseInt(year) - 1 : year}`, `${prevMonth}`);
+        const income = await transactionService.getIncomeByUserId(userInfo._id, defaultAccountBook?.accountBookId._id || "", `${prevMonth === 12 ? parseInt(year) - 1 : year}`, `${prevMonth}`);
         if(income) buildPreviousIncomTableData(income as TransactionItems[]);
     }
 

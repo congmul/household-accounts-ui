@@ -9,6 +9,7 @@ import { formatCurrency } from '@/app/lib/utils';
 import { transactionService } from '@/app/lib/api-services';
 import { Button, Spinner, Modal } from 'react-component-tailwindcss';
 import { RadioButton } from '@/app/ui/shared-components';
+import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 
 interface SwipeableCardType{
     lng: string,
@@ -126,7 +127,24 @@ export const SwipeableCard:React.FC<SwipeableCardType> = ({lng, transaction, edi
                         <div className="text-gray-500">({transaction.subcategory})</div>
                     </div>
                 }
-                <div className="ml-2  text-gray-500">{transaction.note}</div>
+                <div className="ml-2 text-gray-500 flex items-center flex-wrap">
+                    <span>{transaction.note}</span>
+                    {transaction.fixedExpenseMonthly && (
+                        <span className="text-[16px] ml-4 px-3 py-1 rounded bg-green-400 text-green-900 flex items-center justify-center" title="Pending">
+                            <span className="h-[16px] w-[16px]">
+                                <ArrowPathIcon /> 
+                            </span>
+                            <span className="ml-1">Fixed Expense</span>
+                        </span>)}
+
+                    {transaction.pending && (
+                        <span className="text-[16px] ml-4 px-3 py-1 rounded bg-yellow-400 text-yellow-900 flex items-center justify-center" title="Pending">
+                            <span className="h-[16px] w-[16px]">
+                                <ExclamationTriangleIcon /> 
+                            </span>
+                            <span className="ml-1">Pending</span>
+                        </span>)}
+                </div>
             </div>
             <div className={'text-red-500  font-bold whitespace-nowrap'}>
                 -${formatCurrency(transaction.amount)}

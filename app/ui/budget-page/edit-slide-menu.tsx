@@ -8,6 +8,7 @@ import { Spinner } from 'react-component-tailwindcss';
 import { transactionService, budgetService, categoryService } from '@/app/lib/api-services';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
 import { refreshActions } from '@/app/lib/redux';
+import { RootState } from '@/app/lib/redux/store';
 
 interface EditSlideMenuProps{
     lng: string;
@@ -32,6 +33,7 @@ export function EditSlideMenu({
     const dispatch = useDispatch();
     const [ isSaving, setIsSaving ] = useState(false);
     const { selectedDateStr } = useSelector((state:any) => state.calendar);
+    const { defaultAccountBook } = useSelector((state:RootState) => state.accountBook);
     const [ userInfo, _ ] = useSessionStorageState("userInfo", "");
 
     return(<>
@@ -72,6 +74,7 @@ export function EditSlideMenu({
                             
                             const budgetPayload = {
                                 userId:userInfo._id, 
+                                accountBookId: defaultAccountBook?.accountBookId._id || "",
                                 date:selectedDateStr, 
                                 amount,
                                 category: selectedItem.category

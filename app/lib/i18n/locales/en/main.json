@@ -62,6 +62,9 @@
         "header": {
             "title": "Settings"
         },
+        "switch": "switch",
+        "add_account_book": "Add Account Book",
+        "accountBooks": "Account Books",
         "language": "Language",
         "en": "English",
         "ko": "Korean"
