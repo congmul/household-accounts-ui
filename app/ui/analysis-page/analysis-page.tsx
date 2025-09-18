@@ -5,28 +5,30 @@ import React, { useState, useEffect, useTransition } from 'react';
 import { useSelector } from 'react-redux';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
 import { transactionService } from '@/app/lib/api-services';
-import { Transaction, TransactionItems } from '@/app/lib/models';
+import { AccountBookWithMember, Transaction, TransactionItems } from '@/app/lib/models';
 import { formatCurrency } from '@/app/lib/utils';
+import { RootState } from '@/app/lib/redux/store';
 
 export function AnalysisPage({ lng } : { lng: string }) {
     const { t } = useTranslation(lng, 'main');
     const { selectedDateStr } = useSelector((state:any) => state.calendar);
+    const { defaultAccountBook } = useSelector((state:RootState) => state.accountBook);
     const [ isPending, startTransition] = useTransition();
     const [ userInfo, _ ] = useSessionStorageState("userInfo", "");
     const [ expenses, setExpenses ] = useState<Transaction[] | undefined>();
 
     useEffect(() => {
-        if(!selectedDateStr) return;
-        init(selectedDateStr);
-    }, [selectedDateStr]);
+        if(!selectedDateStr || !defaultAccountBook) return;
+        init(selectedDateStr, defaultAccountBook);
+    }, [selectedDateStr, defaultAccountBook]);
 
-    async function init(selectedDateStr:string) {
+    async function init(selectedDateStr:string, defaultAccountBook:AccountBookWithMember){
         if(userInfo === ""){
             throw new Error("Userinfo is not correct.")
           }
           startTransition(async () => {
             const [year, month] = selectedDateStr.split('-'); // ["2024", "08"]
-            const res = await transactionService.getExpenseByUserId(userInfo._id, year, month, "category");
+            const res = await transactionService.getExpenseByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month, "category");
             setExpenses(res)
           })
     }

@@ -15,6 +15,7 @@ import { HandleItemSlideMenu, SwipeableCard } from '@/app/ui/shared-components';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
 import { ExpenseCardSkeleton } from '@/app/ui/skeletons';
 import { HeaderExpenseCard } from './skeletons/calendar-page/header-expense-card';
+import { RootState } from '../lib/redux/store';
 
 type RefType = {
   [key: string]: HTMLElement | null;
@@ -25,6 +26,7 @@ export const CalendarPage = ({ lng }: { lng: string }) => {
   const [ isPending, startTransition] = useTransition();
   const { selectedDateStr } = useSelector((state: any) => state.calendar);
   const { isCalenderPageRefresh } = useSelector((state: any) => state.refresh);
+  const { defaultAccountBook } = useSelector((state: RootState) => state.accountBook);
   const expenseListsRef = useRef<RefType>({}) as MutableRefObject<RefType>;
   const { t } = useTranslation(lng, 'main');
   const [budget, setBudget] = useState<Budget>();
@@ -45,7 +47,7 @@ export const CalendarPage = ({ lng }: { lng: string }) => {
   useEffect(() => {
     if (selectedDateStr === "") return;
     init(selectedDateStr);
-  }, [selectedDateStr]);
+  }, [selectedDateStr, defaultAccountBook]);
 
   useEffect(() => {
     if (expenses == null) return;
@@ -62,8 +64,11 @@ export const CalendarPage = ({ lng }: { lng: string }) => {
         if (userInfo === "") {
           throw new Error("Userinfo is not correct.")
         }
-        const budgetRes = await budgetService.getByUserId(userInfo._id, year, month);
-        const transactionRes = await transactionService.getExpenseByUserId(userInfo._id, year, month);
+
+        if(defaultAccountBook == null) return;
+
+        const budgetRes = await budgetService.getByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month);
+        const transactionRes = await transactionService.getExpenseByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month);
         if (transactionRes == null) return;
   
         setBudget(budgetRes);

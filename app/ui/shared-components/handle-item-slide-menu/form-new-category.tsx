@@ -1,18 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from '@/app/lib/i18n/client'
 import { Dropdown } from '../dropdown/dropdown';
 
 interface FormNewCategoryType {
     lng:string
     onChange?: ({type,value}:{type:string, value:string}) => void
-    isSubCate?: boolean
+    isSubCate?: boolean;
+    defaultValue?: string;
+    defaultType?: string;
 }
 
-export const FormNewCategory:React.FC<FormNewCategoryType> = ({ lng, onChange, isSubCate }) => {
+export const FormNewCategory:React.FC<FormNewCategoryType> = ({ lng, onChange, isSubCate, defaultValue, defaultType }) => {
     const { t } = useTranslation(lng, 'main');
-    const [ value, setValue ] = useState("")
+    const [ value, setValue ] = useState(defaultValue || "");
+
     return(<>
     <div className="flex justify-between items-center border-b p-3">
         <span>{t('general.name')}</span>
@@ -40,7 +43,7 @@ export const FormNewCategory:React.FC<FormNewCategoryType> = ({ lng, onChange, i
                     <Dropdown 
                         lng={lng}
                         className="new-item-dropdown" 
-                        defaultValue={t("general.expense")}
+                        defaultValue={defaultType || "expense"}
                         items={[{value:"expense", label: t('general.expense')},{value:"income", label: t('general.income')},{value:"investment", label: t('general.investment')}]}                            
                         onChange={({value, label}:{value:string, label: string}) => {
                             onChange && onChange({type: "type", value})

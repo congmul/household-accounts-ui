@@ -5,28 +5,29 @@ export const transactionService = {
   /**
    * 
    * @param userId mongoDB ObjectId
+   * @param accountBookId mongoDB ObjectId
    * @param expenseMonth string 2024-07
    * @returns 
    */
-    getExpenseByUserId: async (userId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | undefined> => {
+    getExpenseByUserId: async (userId: string, accountBookId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | undefined> => {
         try{
-            const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/user?type=expense&year=${year}&month=${month}&groupBy=${groupBy}`);
+          const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=expense&year=${year}&month=${month}&groupBy=${groupBy}`);
+          return data;
+        }catch(err){
+          throw err;
+        }
+    },
+    getInvestmentsByUserId: async (userId: string, accountBookId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | TransactionItems[] | undefined> => {
+        try{
+            const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=investment&year=${year}&month=${month}&groupBy=${groupBy}`);
             return data;
         }catch(err){
           throw err;
         }
     },
-    getInvestmentsByUserId: async (userId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | TransactionItems[] | undefined> => {
+    getIncomeByUserId: async (userId: string, accountBookId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | TransactionItems[] | undefined> => {
         try{
-            const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/user?type=investment&year=${year}&month=${month}&groupBy=${groupBy}`);
-            return data;
-        }catch(err){
-          throw err;
-        }
-    },
-    getIncomeByUserId: async (userId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | TransactionItems[] | undefined> => {
-        try{
-            const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/user?type=income&year=${year}&month=${month}&groupBy=${groupBy}`);
+            const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=income&year=${year}&month=${month}&groupBy=${groupBy}`);
             return data;
         }catch(err){
           throw err;

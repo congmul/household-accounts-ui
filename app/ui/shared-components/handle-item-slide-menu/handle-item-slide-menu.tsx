@@ -15,6 +15,7 @@ import { RadioButton } from '@/app/ui/shared-components';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
 import classNames from 'classnames';
 import { formatCurrency } from '@/app/lib/utils';
+import { RootState } from '@/app/lib/redux/store';
 
 
 interface HandleItemSlideMenuType {
@@ -40,6 +41,7 @@ interface HandleItemSlideMenuType {
 export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, close, lng, selectedItem, triggerRefresh }) => {
     const { t } = useTranslation(lng, 'main');
     const { isHandleItemSlideRefresh } = useSelector((state:any) => state.refresh);
+    const { defaultAccountBook } = useSelector((state: RootState) => state.accountBook);
     const reduxDispatch = useDispatch();
     const { 
         date, amount, categories, category, subcategory, type, note, isSaving, isAbleToSave, pending, fixedExpenseMonthly, endDate,
@@ -48,7 +50,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
      const [ input, setInput ] = useState<string>('');
      const [dropdownList, setDropdownList] = useState<{value:string, label:string}[]>([]);
      const [subcategoryDropdownList, setSubcategoryDropdownList] = useState<{value:string, label:string}[]>([]);
-     const [newCategory, setNewCategory] = useState<{name: string, type: string}>({name: "", type: "expense"});
+     const [newCategory, setNewCategory] = useState<{name: string, type: string, accountBookId: string}>({name: "", type: "expense", accountBookId: defaultAccountBook?.accountBookId._id || ""});
      const [ isOpenNewCategory, setIsOpenNewCategory ] = useState(false);
      const [ isSavingNewCategory, setIsSavingNewCategory ] = useState(false);
      const [ newSubcategory, setNewSubcategory] = useState<{name: string}>({name: ""});
@@ -63,7 +65,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
 
     if(!isOpen) return;
     if(selectedItem){
-        init();
+        init(type);
         setDate(selectedItem.dateStr);
         setAmount(parseFloat(selectedItem.amount));
         setInput(selectedItem.amount);
@@ -74,7 +76,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
         selectedItem.endDate && setEndDate(selectedItem.endDate)
         setNote(selectedItem.note);
     }else{
-        init();
+        init(type);
     }
 
     reduxDispatch(refreshActions.setIsHandleItemSlideRefresh(false));
@@ -83,7 +85,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
     useEffect(() => {
         if(!isOpen) return;
         if(selectedItem){
-            init();
+            init(type);
             setDate(selectedItem.dateStr);
             setAmount(parseFloat(selectedItem.amount));
             setInput(selectedItem.amount);
@@ -95,7 +97,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             selectedItem.endDate && setEndDate(selectedItem.endDate)
             setNote(selectedItem.note);
         }else{
-            init();
+            init(type);
         }
     }, [isOpen])
 
@@ -105,7 +107,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
 
     useEffect(() => {
         if(isOpen){
-            init();
+            init(type);
         }
     }, [type]);
 
@@ -114,15 +116,16 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             const subTempCategories:{value:string, label:string}[] = [];
             category.subcategories?.forEach(category => subTempCategories.push({value: category.name, label: category.name}));                                    
             setSubcategoryDropdownList(subTempCategories);
+            setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
         }
     }, [category])
 
-    async function init() {
+    async function init(type: TransactionType | undefined = "expense") {
         try{
             if(userInfo === ""){
                 throw new Error("Userinfo Not Found")
             }
-            const categoriesRes = await categoryService.getByUserId(userInfo._id, type); 
+            const categoriesRes = await categoryService.getByUserId(userInfo._id, defaultAccountBook?.accountBookId._id || "", type); 
             if(categoriesRes) {
                 setCategories(categoriesRes)
                 // If there is selectedItem, then we don't need to set category again.
@@ -141,6 +144,10 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                 const subTempCategories:{value:string, label:string}[] = [];
                 selectedCategory && selectedCategory.subcategories.forEach((category: any) => subTempCategories.push({value: category.name, label: category.name}));
                 setSubcategoryDropdownList(subTempCategories);
+
+                if(defaultAccountBook){
+                    setNewCategory({...newCategory, type, accountBookId: defaultAccountBook.accountBookId._id})
+                }
             }
         }catch(err){
             console.log(err);
@@ -155,6 +162,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             }
             const addTransactionPayload:AddTransactionPayload = {                
                 userId: userInfo._id,
+                accountBookId: defaultAccountBook?.accountBookId._id || "", // Should be always there.
                 date,
                 amount,
                 category: category?.name || "",
@@ -169,7 +177,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             }
             if(selectedItem){
                 // Update Existing Item
-                const {userId, ...updateTransactionPayload } = addTransactionPayload;
+                const {userId, accountBookId, ...updateTransactionPayload } = addTransactionPayload;
                 const res = await transactionService.updateTransaction(selectedItem.id, updateTransactionPayload);
             }else{
                 // Create new Item
@@ -292,7 +300,10 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                     checkIsAbleToCreate({date, amount, category: selectedCategory as Category});
                                 }}
                             />                        
-                            <SlideMenu isOpen={isOpenNewCategory} close={() => setIsOpenNewCategory(false)} position={'bottom'} width={100} height={100}
+                            <SlideMenu isOpen={isOpenNewCategory} close={() => {
+                                setIsOpenNewCategory(false);
+                                setNewCategory({ ...newCategory, name: "" });
+                            }} position={'bottom'} width={100} height={100}
                             header={<>
                                     <div className={`px-4 py-2 text-white flex-2 text-center`}>
                                         {`${t('general.new')} ${t(`new_input.body.category`)}`}
@@ -311,7 +322,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                                     throw new Error("Userinfo Not Found")
                                                 }
                                                 await categoryService.create(userInfo._id, newCategory)
-
+                                                setNewCategory({ ...newCategory, name: "" });
                                                 reduxDispatch(refreshActions.setIsHandleItemSlideRefresh(true));
                                                 reduxDispatch(refreshActions.setIsBudgetPageRefresh(true));
                                                 setIsOpenNewCategory(false);
@@ -326,13 +337,13 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                     }
                                 </>}
                             ><>
-                             <FormNewCategory lng={lng} onChange={({value, type}) => {
+                             {isOpenNewCategory && <FormNewCategory lng={lng} defaultValue={newCategory.name || ""}  defaultType={newCategory.type} onChange={({value, type}) => {
                                 if(type === 'name'){
                                     setNewCategory({...newCategory, name: value})
                                 }else{
                                     setNewCategory({...newCategory, type: value})
                                 }
-                                }} />
+                                }} />}
                             </>
                             </SlideMenu>
                         </>
@@ -351,7 +362,10 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                     checkIsAbleToCreate({date, amount, category: selectedCategory as Category});
                                 }}
                             />                        
-                            <SlideMenu isOpen={isOpenNewCategory} close={() => setIsOpenNewCategory(false)} position={'bottom'} width={100} height={100}
+                            <SlideMenu isOpen={isOpenNewCategory} close={() => {
+                                setIsOpenNewCategory(false);
+                                setNewCategory({ ...newCategory, name: "" });
+                            }} position={'bottom'} width={100} height={100}
                             header={<>
                                     <div className={`px-4 py-2 text-white flex-2 text-center`}>
                                         {`${t('general.new')} ${t(`new_input.body.category`)}`}
@@ -369,7 +383,8 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                                 if(userInfo === ""){
                                                     throw new Error("Userinfo Not Found")
                                                 }
-                                                await categoryService.create(userInfo._id, newCategory)
+                                                await categoryService.create(userInfo._id, newCategory);
+                                                setNewCategory({ ...newCategory, name: "" });
 
                                                 reduxDispatch(refreshActions.setIsHandleItemSlideRefresh(true));
                                                 setIsOpenNewCategory(false);
@@ -384,13 +399,13 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                     }
                                 </>}
                             ><>
-                             <FormNewCategory lng={lng} onChange={({value, type}) => {
+                             {isOpenNewCategory && <FormNewCategory lng={lng} defaultValue={newCategory.name || ""} defaultType={newCategory.type} onChange={({value, type}) => {
                                 if(type === 'name'){
                                     setNewCategory({...newCategory, name: value})
                                 }else{
                                     setNewCategory({...newCategory, type: value})
                                 }
-                                }} />
+                                }} />}
                             </>
                             </SlideMenu>
                         </>
@@ -417,7 +432,10 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                     }
                                 }}
                             />
-                            <SlideMenu isOpen={isOpenNewSubcategory} close={() => setIsOpenNewSubcategory(false)} position={'bottom'} width={100} height={100}
+                            <SlideMenu isOpen={isOpenNewSubcategory} close={() => {
+                                setIsOpenNewSubcategory(false);
+                                setNewSubcategory({name: ""});
+                            }} position={'bottom'} width={100} height={100}
                             header={<>
                                     <div className={`px-4 py-2 text-white flex-2 text-center`}>
                                         {`${t('general.new')} ${t(`new_input.body.subcategory`)}`}
@@ -442,6 +460,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                             }catch(err){
                                                 console.log(err);
                                             }finally{
+                                                setNewSubcategory({name: ""});
                                                 setIsSavingNewSubcategory(false);
                                             }
                                         }} className={`text-white p-2 px-3 cursor-pointer flex-1 text-right`}>
@@ -450,9 +469,9 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                     }
                                 </>}
                             ><>
-                             <FormNewCategory lng={lng} isSubCate={true} onChange={({value, type}) => {
+                             {isOpenNewSubcategory && <FormNewCategory lng={lng} isSubCate={true}  defaultValue={newSubcategory.name || ""} onChange={({value, type}) => {
                                  setNewSubcategory({name: value})
-                                }} />
+                                }} />}
                             </>
                             </SlideMenu>
                         </div>
@@ -468,7 +487,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                         </div>
                         {
                             // if this expense is pending, then we're not interested in fixedExpense.
-                            !pending &&
+                            !selectedItem && !pending &&
                             <div className="flex justify-between items-center border-b py-3">
                                 <span>{t('new_input.body.fixedExpense.name')}({t('general.monthly')})</span> 
                                 <ToggleButton initial={fixedExpenseMonthly} onToggle={(v) => setFixedExpenseMonthly(v)} />
@@ -489,6 +508,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                             <input
                                 type="date"
                                 value={endDate}
+                                disabled={selectedItem != null}
                                 onChange={(e) => {
                                     setEndDate(e.target.value);
                                 }}

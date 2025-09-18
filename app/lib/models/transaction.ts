@@ -24,6 +24,7 @@ export type Transaction = {
 
 export type AddTransactionPayload = {
   userId: string;
+  accountBookId: string;
   date: string;
   amount: number;
   category: string;
