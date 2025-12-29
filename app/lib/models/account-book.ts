@@ -15,3 +15,9 @@ export type AccountBookWithMember = {
     updatedAt: string;
     accountBookId: AccountBook;
 }
+
+export type AccountBookPayload = {
+    userId: string;
+    name: string;
+    description?: string;
+}

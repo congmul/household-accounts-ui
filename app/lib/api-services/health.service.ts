@@ -1,12 +1,13 @@
-import axios from 'axios';
+import { httpClient } from '@/app/lib/infrastructure/http/httpClient';
 const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL;
 const coreServiceUrl = process.env.NEXT_PUBLIC_CORE_SERVICE_URL;
 
 export const healthService = {
     accountHealth: () => {
-        axios.get(`${userServiceUrl}/health`);
+        // fire-and-forget; keep using full URL because userService is external to coreServiceUrl
+        httpClient.get(`${userServiceUrl}/health`);
     },
     coreHealth: () => {
-        axios.get(`${coreServiceUrl}/health`);
+        httpClient.get(`${coreServiceUrl}/health`);
     }
 }

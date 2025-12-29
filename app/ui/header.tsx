@@ -7,7 +7,7 @@ import { useSessionStorageState } from '@/app/lib/custom-hook';
 import { useCookies } from 'react-cookie';
 import { useDispatch, useSelector } from 'react-redux';
 import { accountBookActions } from '@/app/lib/redux';
-import { accountBookService } from '../lib/api-services/accountBook.server';
+import { accountBookService } from '../lib/api-services/accountBook.service';
 import { RootState } from '../lib/redux/store';
 import { AccountBookForm } from './shared-components';
 

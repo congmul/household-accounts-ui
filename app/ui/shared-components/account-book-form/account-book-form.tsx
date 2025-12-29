@@ -6,7 +6,7 @@ import { Button, Input } from 'react-component-tailwindcss';
 import { useForm, Controller } from "react-hook-form"
 import { useDispatch } from 'react-redux';
 import { accountBookActions } from '@/app/lib/redux';
-import { accountBookService } from '@/app/lib/api-services/accountBook.server';
+import { accountBookService } from '@/app/lib/api-services/accountBook.service';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
 
 interface AccountBookFormProps {

@@ -9,3 +9,9 @@ export type Budget = {
     totalAmount: number;
     budgets: BudgetItem[];
 }
+export type BudgetPayload = {
+    userId:string;
+    date:string;
+    amount: number;
+    category:string;
+}

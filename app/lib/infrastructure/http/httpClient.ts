@@ -26,9 +26,9 @@ async function handleRequest<T>(promise: Promise<{ data: T }>): Promise<T | unde
 
 export const httpClient = {
     get: <TResponse>(url: string, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.get(url, config)),
-    post: <TResponse, TPayload>(url: string, payload: TPayload, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.post(url, payload, config)),
-    patch: <TResponse, TPayload>(url: string, payload?: TPayload, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.patch(url, payload, config)),
-    put: <TResponse, TPayload>(url: string, payload?: TPayload, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.put(url, payload, config)),
+    post: <TResponse, TPayload>(url: string, payload: TPayload | undefined, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.post(url, payload, config)),
+    patch: <TResponse, TPayload>(url: string, payload?: TPayload | undefined, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.patch(url, payload, config)),
+    put: <TResponse, TPayload>(url: string, payload?: TPayload | undefined, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.put(url, payload, config)),
     delete: <TResponse>(url: string, config?: AxiosRequestConfig) => handleRequest<TResponse>(client.delete(url, config)),
 };
 
