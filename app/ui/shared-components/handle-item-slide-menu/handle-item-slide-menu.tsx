@@ -85,6 +85,7 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
     useEffect(() => {
         if(!isOpen) return;
         if(selectedItem){
+            console.log({selectedItem});
             init(type);
             setDate(selectedItem.dateStr);
             setAmount(parseFloat(selectedItem.amount));
@@ -116,7 +117,9 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
             const subTempCategories:{value:string, label:string}[] = [];
             category.subcategories?.forEach(category => subTempCategories.push({value: category.name, label: category.name}));                                    
             setSubcategoryDropdownList(subTempCategories);
-            setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
+            if(!subcategory?.name){
+                setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
+            }
         }
     }, [category])
 
