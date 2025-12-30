@@ -5,10 +5,9 @@ export const userService = {
     login: async (payload: LoginPayload):Promise<LoginResponse> => {
         try{
             const data = await httpClient.post<LoginResponse, LoginPayload>(`${userServiceUrl}/auth/login`, payload);
-            if(!data) throw new Error('Login failed');
             return data;
         }catch(err){
-          throw err;
+            throw err;
         }
     },
     msLogin: async () => {

@@ -7,7 +7,7 @@ import { MSLoginButton, GoogleLoginButton, GuestLoginButton } from '@/app/ui/sha
 import { Button, Input } from 'react-component-tailwindcss';
 import img from '/public/assets/icons/icon-72x72.png';
 import Image from 'next/image';
-import { userService, healthService } from '@/app/lib/api-services';
+import { userService } from '@/app/lib/api-services';
 import { useCookies } from 'react-cookie'
 
 export default function Index({ params } : { params: Promise<{ lng: string }> }) {
@@ -18,12 +18,6 @@ export default function Index({ params } : { params: Promise<{ lng: string }> })
     const [password, setPassword] = useState('');
     const [_, setCookie] = useCookies(["userInfo"])
     const [ isLoggingin, setIsLoggingin ] = useState(false);
-
-    // Wake-up account-sevice & core-service
-    useEffect(() => {
-      healthService.accountHealth()
-      healthService.coreHealth()
-    }, [])
 
     const handleSubmit = async (e:any) => {
       try{
