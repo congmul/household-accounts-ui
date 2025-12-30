@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { Transaction, TransactionType, AddTransactionPayload, PatchTransactionPayload, TransactionItems } from '@/app/lib/models';
+import { Transaction, AddTransactionPayload, PatchTransactionPayload, TransactionItems } from '@/app/lib/models';
+import { httpClient } from '@/app/lib/infrastructure/http/httpClient';
 const coreServiceUrl = process.env.NEXT_PUBLIC_CORE_SERVICE_URL;
 export const transactionService = {
   /**
@@ -11,7 +11,7 @@ export const transactionService = {
    */
     getExpenseByUserId: async (userId: string, accountBookId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | undefined> => {
         try{
-          const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=expense&year=${year}&month=${month}&groupBy=${groupBy}`);
+          const data = await httpClient.get<Transaction[]>(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=expense&year=${year}&month=${month}&groupBy=${groupBy}`);
           return data;
         }catch(err){
           throw err;
@@ -19,7 +19,7 @@ export const transactionService = {
     },
     getInvestmentsByUserId: async (userId: string, accountBookId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | TransactionItems[] | undefined> => {
         try{
-            const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=investment&year=${year}&month=${month}&groupBy=${groupBy}`);
+            const data = await httpClient.get<Transaction[] | TransactionItems[]>(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=investment&year=${year}&month=${month}&groupBy=${groupBy}`);
             return data;
         }catch(err){
           throw err;
@@ -27,7 +27,7 @@ export const transactionService = {
     },
     getIncomeByUserId: async (userId: string, accountBookId: string, year: string, month: string, groupBy?: string):Promise<Transaction[] | TransactionItems[] | undefined> => {
         try{
-            const { data } = await axios.get(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=income&year=${year}&month=${month}&groupBy=${groupBy}`);
+            const data = await httpClient.get<Transaction[] | TransactionItems[]>(`${coreServiceUrl}/transaction/${userId}/${accountBookId}/user?type=income&year=${year}&month=${month}&groupBy=${groupBy}`);
             return data;
         }catch(err){
           throw err;
@@ -35,7 +35,7 @@ export const transactionService = {
     },
     createTransaction: async (payload: AddTransactionPayload) => {
       try{
-        const { data } = await axios.post(`${coreServiceUrl}/transaction`, payload);
+        const data = await httpClient.post<any, AddTransactionPayload>(`${coreServiceUrl}/transaction`, payload);
         return data;
       }catch(err){
         throw err;
@@ -43,7 +43,7 @@ export const transactionService = {
     },
     updateTransaction: async (transactionId: string, payload: PatchTransactionPayload) => {
       try{
-        const { data } = await axios.patch(`${coreServiceUrl}/transaction/${transactionId}`, payload);
+        const data = await httpClient.patch<any, PatchTransactionPayload>(`${coreServiceUrl}/transaction/${transactionId}`, payload);
         return data;
       }catch(err){
         throw err;
@@ -51,7 +51,7 @@ export const transactionService = {
     },
     deleteTransaction: async (transactionId: string) => {
       try{
-        const { data } = await axios.delete(`${coreServiceUrl}/transaction/${transactionId}`);
+        const data = await httpClient.delete<any>(`${coreServiceUrl}/transaction/${transactionId}`);
         return data;
       }catch(err){
         throw err;
@@ -59,7 +59,7 @@ export const transactionService = {
     },
     deleteFixedExpense: async (transactionId: string, fixedSeriesId: string, action = 'only_one') => {
       try{
-        const { data } = await axios.delete(`${coreServiceUrl}/transaction/fixedExpense/${transactionId}/${fixedSeriesId}?action=${action}`);
+        const data = await httpClient.delete<any>(`${coreServiceUrl}/transaction/fixedExpense/${transactionId}/${fixedSeriesId}?action=${action}`);
         return data;
       }catch(err){
         throw err;
