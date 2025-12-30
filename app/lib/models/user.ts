@@ -8,3 +8,13 @@ export type User = {
     lastLogin: string
     updateAt: string
 }
+
+export type LoginResponse = {
+    userInfo: User;
+    accessToken: string;
+}
+
+export type LoginPayload = {
+    email: string;
+    password: string;
+}

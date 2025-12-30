@@ -1,18 +1,18 @@
-import axios from 'axios';
-import { User } from '@/app/lib/models';
+import { LoginResponse, LoginPayload, } from '@/app/lib/models';
+import { httpClient } from '@/app/lib/infrastructure/http/httpClient';
 const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL;
 export const userService = {
-    login: async (payload: { email: string, password: string }):Promise<{userInfo: User, accessToken: string}> => {
+    login: async (payload: LoginPayload):Promise<LoginResponse> => {
         try{
-            const { data } = await axios.post(`${userServiceUrl}/auth/login`, payload);
+            const data = await httpClient.post<LoginResponse, LoginPayload>(`${userServiceUrl}/auth/login`, payload);
             return data;
         }catch(err){
-          throw err;
+            throw err;
         }
     },
     msLogin: async () => {
         try{
-            const { data } = await axios.get(`${userServiceUrl}/auth/login/ms`);
+            const data = await httpClient.get<any>(`${userServiceUrl}/auth/login/ms`);
             return data;
         }catch(err){
             throw err;
@@ -20,7 +20,7 @@ export const userService = {
     },
     googleLogin: async () => {
         try{
-            const { data } = await axios.get(`${userServiceUrl}/auth/login/google`);
+            const data = await httpClient.get<any>(`${userServiceUrl}/auth/login/google`);
             return data;
         }catch(err){
             throw err;

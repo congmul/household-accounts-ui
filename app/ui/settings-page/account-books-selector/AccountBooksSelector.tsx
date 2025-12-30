@@ -6,7 +6,7 @@ import { useTranslation } from '@/app/lib/i18n/client';
 import { RootState } from '@/app/lib/redux/store';
 import { Button } from 'react-component-tailwindcss';
 import { AccountBookForm } from '../../shared-components';
-import { accountBookService } from '@/app/lib/api-services/accountBook.server';
+import { accountBookService } from '@/app/lib/api-services/accountBook.service';
 import { useSessionStorageState } from '@/app/lib/custom-hook';
 
 const AccountBooksSelector = ({lng}: {lng: string}) => {
