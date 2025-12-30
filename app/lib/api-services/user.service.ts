@@ -1,4 +1,4 @@
-import { User, LoginResponse, LoginPayload, } from '@/app/lib/models';
+import { LoginResponse, LoginPayload, } from '@/app/lib/models';
 import { httpClient } from '@/app/lib/infrastructure/http/httpClient';
 const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL;
 export const userService = {
