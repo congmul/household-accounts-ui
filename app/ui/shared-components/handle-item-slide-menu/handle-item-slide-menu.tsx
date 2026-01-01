@@ -112,17 +112,6 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
         }
     }, [type]);
 
-    useEffect(() => {
-        if(isOpen && category){
-            const subTempCategories:{value:string, label:string}[] = [];
-            category.subcategories?.forEach(category => subTempCategories.push({value: category.name, label: category.name}));                                    
-            setSubcategoryDropdownList(subTempCategories);
-            if(!subcategory?.name){
-                setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
-            }
-        }
-    }, [category])
-
     async function init(type: TransactionType | undefined = "expense") {
         try{
             if(userInfo === ""){
@@ -299,8 +288,14 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                 newAddItemOnClick={() => setIsOpenNewCategory(true)}                         
                                 onChange={({value, label}:{value:string, label: string}) => {
                                     const selectedCategory = categories.find((category) => category.name === value);
-                                    selectedCategory && setCategory(selectedCategory);
-                                    checkIsAbleToCreate({date, amount, category: selectedCategory as Category});
+                                    if(selectedCategory){
+                                        setCategory(selectedCategory);
+                                        checkIsAbleToCreate({date, amount, category: selectedCategory as Category});
+                                        // Need to reset the subcategory dropdown menu whenever the category changes
+                                        setSubcategoryDropdownList(selectedCategory.subcategories?.map(category => ({value: category.name, label: category.name})));
+                                        // Reset the subcategory selection
+                                        setSubcategory(undefined);
+                                    }
                                 }}
                             />                        
                             <SlideMenu isOpen={isOpenNewCategory} close={() => {
