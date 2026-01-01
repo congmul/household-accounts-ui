@@ -112,18 +112,6 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
         }
     }, [type]);
 
-    // useEffect(() => {
-    //     if(isOpen && category){
-    //         const subTempCategories:{value:string, label:string}[] = [];
-    //         category.subcategories?.forEach(category => subTempCategories.push({value: category.name, label: category.name}));
-    //         console.log({category, subcategory})                                    
-    //         setSubcategoryDropdownList(subTempCategories);
-    //         // if(!subcategory?.name){
-    //         //     setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
-    //         // }
-    //     }
-    // }, [category])
-
     async function init(type: TransactionType | undefined = "expense") {
         try{
             if(userInfo === ""){
