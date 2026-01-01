@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from '@/app/lib/i18n/client'
-import { isToday,  parseISO } from "date-fns"
+import { isToday,  parseISO, set } from "date-fns"
 import { SlideMenu, Dropdown, AmountInput, ToggleButton } from '..';
 import { Spinner, Modal, Button } from 'react-component-tailwindcss';
 import { AddTransactionPayload, BaseCategory, Category, TransactionType } from '@/app/lib/models';
@@ -112,16 +112,17 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
         }
     }, [type]);
 
-    useEffect(() => {
-        if(isOpen && category){
-            const subTempCategories:{value:string, label:string}[] = [];
-            category.subcategories?.forEach(category => subTempCategories.push({value: category.name, label: category.name}));                                    
-            setSubcategoryDropdownList(subTempCategories);
-            if(!subcategory?.name){
-                setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
-            }
-        }
-    }, [category])
+    // useEffect(() => {
+    //     if(isOpen && category){
+    //         const subTempCategories:{value:string, label:string}[] = [];
+    //         category.subcategories?.forEach(category => subTempCategories.push({value: category.name, label: category.name}));
+    //         console.log({category, subcategory})                                    
+    //         setSubcategoryDropdownList(subTempCategories);
+    //         // if(!subcategory?.name){
+    //         //     setSubcategory(category.subcategories ? category.subcategories[0] : undefined);
+    //         // }
+    //     }
+    // }, [category])
 
     async function init(type: TransactionType | undefined = "expense") {
         try{
@@ -299,8 +300,14 @@ export const HandleItemSlideMenu:React.FC<HandleItemSlideMenuType> = ({ isOpen, 
                                 newAddItemOnClick={() => setIsOpenNewCategory(true)}                         
                                 onChange={({value, label}:{value:string, label: string}) => {
                                     const selectedCategory = categories.find((category) => category.name === value);
-                                    selectedCategory && setCategory(selectedCategory);
-                                    checkIsAbleToCreate({date, amount, category: selectedCategory as Category});
+                                    if(selectedCategory){
+                                        setCategory(selectedCategory);
+                                        checkIsAbleToCreate({date, amount, category: selectedCategory as Category});
+                                        // Need to reset the subcategory dropdown menu whenever the category changes
+                                        setSubcategoryDropdownList(selectedCategory.subcategories?.map(category => ({value: category.name, label: category.name})));
+                                        // Reset the subcategory selection
+                                        setSubcategory(undefined);
+                                    }
                                 }}
                             />                        
                             <SlideMenu isOpen={isOpenNewCategory} close={() => {
