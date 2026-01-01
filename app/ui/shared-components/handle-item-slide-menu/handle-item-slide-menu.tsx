@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from '@/app/lib/i18n/client'
-import { isToday,  parseISO, set } from "date-fns"
+import { isToday,  parseISO } from "date-fns"
 import { SlideMenu, Dropdown, AmountInput, ToggleButton } from '..';
 import { Spinner, Modal, Button } from 'react-component-tailwindcss';
 import { AddTransactionPayload, BaseCategory, Category, TransactionType } from '@/app/lib/models';
