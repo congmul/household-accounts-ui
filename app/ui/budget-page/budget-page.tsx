@@ -89,8 +89,8 @@ export function BudgetPage({ lng } : { lng: string }) {
                 setTotalInvestments(totalAmountOfInvest);
     
                 const expenses = await transactionService.getExpenseByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month, "category");
-                if(categories && budget && expenses){
-                    buildTableData(categories, budget.budgets || [], expenses);
+                if(categories && expenses){
+                    buildTableData(categories, budget?.budgets || [], expenses);
                 }
             })
         }catch(err){
