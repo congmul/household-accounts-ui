@@ -45,7 +45,7 @@ export const Header = ({ lng }: { lng: string }) => {
 
   return (<>
     <div className="header flex justify-around items-center bg-red-300 text-white h-[70px]">
-      {pageName === 'settings' && t(`${pageName}.header.title`)}
+      {(pageName === 'settings' || pageName === 'analysis') && t(`${pageName}.header.title`)}
     </div>
     { accountBooks?.length === 0 && defaultAccountBook == null  && <AccountBookForm isOpen={true} isFirstTime={true} close={() => {}} /> }
   </>
