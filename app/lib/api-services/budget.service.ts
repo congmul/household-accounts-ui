@@ -18,6 +18,13 @@ export const budgetService = {
             console.log(err);
         }
     },
+    createCopyAllPreMonth: async (userId: string, accountBookId: string):Promise<void> => {
+        try{
+            await httpClient.post(`/budget/copy-all-pre-month`, { userId, accountBookId });
+        }catch(err){
+            console.log(err);
+        }
+    },
     updateBudget: async (budgetId:string, amount: number):Promise<Budget | undefined> => {
         try{
             const data = await httpClient.patch<Budget, {amount: number}>(`/budget/${budgetId}`, {amount});

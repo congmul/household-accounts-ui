@@ -55,6 +55,11 @@
         "title": "예산",
         "header": {
             "title": "예산"
+        },
+        "default_budget": {
+            "title": "기본 예산 설정",
+            "description": "지난 달 기준으로 예산을 설정하시겠습니까?",
+            "areyousure": "기본 예산을 설정하지 않으시겠습니까?"
         }
     },
     "settings": {
@@ -81,6 +86,8 @@
         "delete": "삭제",
         "confirm": "확인",
         "cancel": "취소",
+        "yes": "예",
+        "no": "아니오",
         "delete_alert": "삭제하시겠습니까?",
         "delete_repeat_alert": "반복 고정지출을 삭제하시겠습니까?",
         "delete_repeat_option": {
