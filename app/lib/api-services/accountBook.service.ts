@@ -32,7 +32,6 @@ export const accountBookService = {
     beginningMonthCheck: async (accountBookId: string):Promise<Record<string, boolean>> => {
         try {
             const { isCopiedBudget } = await httpClient.get<Record<string, boolean>>(`/account-book/beginningMonthCheck/${accountBookId}`);
-            console.log(isCopiedBudget)
             return { isCopiedBudget };
         } catch (err) {
             console.log(err);
