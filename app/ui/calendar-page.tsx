@@ -16,6 +16,8 @@ import { useSessionStorageState } from '@/app/lib/custom-hook';
 import { ExpenseCardSkeleton } from '@/app/ui/skeletons';
 import { HeaderExpenseCard } from './skeletons/calendar-page/header-expense-card';
 import { RootState } from '../lib/redux/store';
+import { accountBookService } from '../lib/api-services/accountBook.service';
+import { Modal, Button } from 'react-component-tailwindcss';
 
 type RefType = {
   [key: string]: HTMLElement | null;
@@ -36,6 +38,9 @@ export const CalendarPage = ({ lng }: { lng: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState();
   const [userInfo, _] = useSessionStorageState("userInfo", "");
+  const [ isDefaultBudgetSetSlideOpen, setIsDefaultBudgetSetSlideOpen ] = useState(false); // For opening budget setting modal.
+  const [ isSaving, setIsSaving ] = useState(false);
+  const [ areYouSure, setAreYouSure ] = useState(false);
 
   useEffect(() => {
     if (!isCalenderPageRefresh) return;
@@ -66,6 +71,14 @@ export const CalendarPage = ({ lng }: { lng: string }) => {
         }
 
         if(defaultAccountBook == null) return;
+
+        // Check if budget is set for the beginning of the month.
+        const { isCopiedBudget } = await accountBookService.beginningMonthCheck(defaultAccountBook.accountBookId._id);
+        if(!isCopiedBudget){
+          // Open modal to set budget from previous month
+          setIsDefaultBudgetSetSlideOpen(true);
+          return;
+        }
 
         const budgetRes = await budgetService.getByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month);
         const transactionRes = await transactionService.getExpenseByUserId(userInfo._id, defaultAccountBook.accountBookId._id, year, month);
@@ -205,6 +218,74 @@ export const CalendarPage = ({ lng }: { lng: string }) => {
           dispatch(refreshActions.setIsCalenderPageRefresh(true));
           dispatch(refreshActions.setIsBudgetPageRefresh(true));
         }} />
+
+      {/* Open modal to set budget from previous month */}
+      <Modal 
+        isOpen={isDefaultBudgetSetSlideOpen} 
+        close={() => setIsDefaultBudgetSetSlideOpen(false)}
+        title={t('budget.default_budget.title')}
+      >
+        <div>
+          {
+            areYouSure
+            ? t('budget.default_budget.areyousure')
+            : t('budget.default_budget.description')
+          }
+          </div>
+        <div className="mt-3 flex items-center justify-end">
+          {
+            areYouSure
+            ?<>
+              <Button               
+                  className="mr-3 text-2xl" size='lg' color="pink"         
+                  onClick={() => setAreYouSure(false)}
+                  >
+                  {t('general.no')}
+              </Button>
+              <Button
+                className="text-2xl" size='lg' color="pink"  variant='secondary' 
+                onClick={async () => {                  
+                  // handle confirm action
+                  if(defaultAccountBook == null) return;
+                  setIsSaving(true);
+                  await accountBookService.updateBeginningMonthCheck(defaultAccountBook.accountBookId._id, { checkList: {isCopiedBudget: true} });
+                  setIsDefaultBudgetSetSlideOpen(false);
+                  setAreYouSure(false);
+                  setIsSaving(false);
+                  init(selectedDateStr);
+                }}
+                  loading={isSaving}
+                >
+                {t('general.yes')}
+              </Button>
+            </>
+            :<>
+              <Button
+                  className="text-2xl" size='lg' color="pink" 
+                  onClick={async () => {
+                    if(defaultAccountBook == null) return;
+                    setIsSaving(true);
+                    await budgetService.createCopyAllPreMonth(userInfo._id, defaultAccountBook.accountBookId._id);
+                    await accountBookService.updateBeginningMonthCheck(defaultAccountBook.accountBookId._id, { checkList: {isCopiedBudget: true} });
+                    setIsDefaultBudgetSetSlideOpen(false);
+                    setAreYouSure(false);
+                    setIsSaving(false);
+                    init(selectedDateStr);
+                  }}
+                  loading={isSaving}
+                  >
+                  {t('general.confirm')}
+              </Button>
+              <Button               
+                  className="ml-3 text-2xl" size='lg' color="pink" variant='secondary'          
+                  onClick={() => setAreYouSure(true)}                            
+                  >
+                  {t('general.no')}
+              </Button>
+            </>
+          }
+        </div>
+      </Modal>
     </div>
   </div>)
 }

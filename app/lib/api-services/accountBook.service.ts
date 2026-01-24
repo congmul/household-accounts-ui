@@ -28,5 +28,24 @@ export const accountBookService = {
             console.log(err);
             return undefined;
         }
+    },
+    beginningMonthCheck: async (accountBookId: string):Promise<Record<string, boolean>> => {
+        try {
+            const { isCopiedBudget } = await httpClient.get<Record<string, boolean>>(`/account-book/beginningMonthCheck/${accountBookId}`);
+            console.log(isCopiedBudget)
+            return { isCopiedBudget };
+        } catch (err) {
+            console.log(err);
+            return {};
+        }
+    },
+    updateBeginningMonthCheck: async (accountBookId: string, checkList: {checkList: { isCopiedBudget: boolean }}):Promise<string> => {
+        try {
+            await httpClient.patch(`/account-book/beginningMonthCheck/${accountBookId}`, checkList);
+            return "ok";
+        } catch (err) {
+            console.log(err);
+            return "error";
+        }
     }
 };
