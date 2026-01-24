@@ -14,6 +14,15 @@
         "title": "Analysis",
         "header": {
             "title": "Analysis"
+        },
+        "no-data": "No data available",
+        "date-range": {
+            "this": "This month",
+            "last-30d": "Last 30d",
+            "last-90d": "Last 90d",
+            "last-180d": "Last 180d",
+            "last-365d": "Last 365d",
+            "custom": "Custom"
         }
     },
     "new_input": {
