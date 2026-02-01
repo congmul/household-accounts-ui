@@ -33,6 +33,12 @@ export async function middleware(req: any) {
       !languages.some((loc:string) => req.nextUrl.pathname.startsWith(`/${loc}`)) &&
       !req.nextUrl.pathname.startsWith('/_next')
     ) {
+      // If there's no token, don't attempt verification (may happen immediately after login when cookie not yet set).
+      if (!userInfoParsed?.accessToken) {
+        // Redirect to localized login page, but do not delete cookies here.
+        return NextResponse.redirect(new URL(`/${lng}/login`, req.url));
+      }
+
       try {
         await jwtVerify(userInfoParsed.accessToken, new TextEncoder().encode(jwtSecret || ""));
         return NextResponse.redirect(new URL(`/${lng}${req.nextUrl.pathname}`, req.url))
@@ -42,9 +48,8 @@ export async function middleware(req: any) {
           response.cookies.delete("userInfo");
           return response;
         }else{
-          // Unknown error, need to remove cookies and redirect login again.
+          // Unknown error: redirect to login but avoid deleting cookie unless explicitly expired
           const response = NextResponse.redirect(new URL(`/${lng}/login`, req.url));
-          response.cookies.delete("userInfo");
           return response;
         }
       }
@@ -59,6 +64,10 @@ export async function middleware(req: any) {
     }
 
     try{
+      // Only verify if we have a token
+      if (!userInfoParsed?.accessToken) {
+        return NextResponse.next();
+      }
       await jwtVerify(userInfoParsed.accessToken, new TextEncoder().encode(jwtSecret || ""));
       const response = NextResponse.next();
       return response;
