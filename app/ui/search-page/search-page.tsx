@@ -217,10 +217,10 @@ export function SearchPage({ lng } : { lng: string }){
                     <div>Loading...</div>
                 ) : (
                     !hasSearched ? (
-                        <div className="text-slate-600">Enter search criteria and click Search to view transactions.</div>
+                        <div className="text-slate-600">{t('search.init')}</div>
                     ) : (
                         results.length === 0 ? (
-                            <div>No transactions found</div>
+                            <div>{t('search.no-data')}</div>
                         ) : (
                             <div className="space-y-2">
                                 {results.map(r => (
