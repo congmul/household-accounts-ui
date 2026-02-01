@@ -28,7 +28,9 @@
     "search": {
         "header": {
             "title": "Search"
-        }
+        },
+        "init": "Enter search criteria and click Search to view transactions.",
+        "no-data": "No transactions found"
     },
     "new_input": {
         "title": "New Input",
@@ -115,6 +117,7 @@
         "type": "Type",
         "category": "Category",
         "difference": "Difference",
+        "all": "All",
         "budget": "Budget",
         "search": "Search",
         "searching": "Searching...",
