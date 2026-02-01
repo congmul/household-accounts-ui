@@ -1,4 +1,4 @@
-import { LanguageSelector, LogoutButton, AccountBooksSelector } from '@/app/ui/settings-page'
+import { LanguageSelector, LogoutButton, AccountBooksSelector, SettingMenus } from '@/app/ui/settings-page'
 
 export default async function Page({ params } : { params: Promise<{ lng: string }> }) {    
     const { lng } = await params;
@@ -9,6 +9,9 @@ export default async function Page({ params } : { params: Promise<{ lng: string 
             </div>
             <div className="flex justify-between items-start border-b py-3">
                 <AccountBooksSelector lng={lng} />
+            </div>
+            <div className="flex justify-between items-start border-b py-3">
+                <SettingMenus lng={lng} />
             </div>
             <div className="flex justify-between items-center border-b py-3">
                 <span className="flex items-center px-3"></span>
