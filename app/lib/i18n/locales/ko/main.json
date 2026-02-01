@@ -25,6 +25,11 @@
             "custom": "사용자 정의"
         }
     },
+    "search": {
+        "header": {
+            "title": "검색"
+        }
+    },
     "new_input": {
         "title": "새 아이템",
         "header": {
@@ -81,7 +86,9 @@
         "accountBooks": "가계부",
         "language": "언어",
         "en": "영어",
-        "ko": "한국어"
+        "ko": "한국어",
+        "menu": "메뉴",
+        "search": "검색"
     },
     "slide-menu": {
         "save": "저장"
@@ -108,7 +115,12 @@
         "type": "타입",
         "category": "카테고리",
         "difference": "차이",
+        "all": "전체",
         "budget": "예산",
+        "search": "검색",
+        "searching": "검색중...",
+        "search-keyword": "검색어",
+        "reset": "초기화",
         "investment": "투자",
         "last_month_income": "지난달 수익",
         "expense": "지출",

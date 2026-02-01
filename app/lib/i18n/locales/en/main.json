@@ -25,6 +25,11 @@
             "custom": "Custom"
         }
     },
+    "search": {
+        "header": {
+            "title": "Search"
+        }
+    },
     "new_input": {
         "title": "New Input",
         "header": {
@@ -81,7 +86,9 @@
         "accountBooks": "Account Books",
         "language": "Language",
         "en": "English",
-        "ko": "Korean"
+        "ko": "Korean",
+        "menu": "Menu",
+        "search": "Search"
     },
     "slide-menu": {
         "save": "Save"
@@ -109,6 +116,10 @@
         "category": "Category",
         "difference": "Difference",
         "budget": "Budget",
+        "search": "Search",
+        "searching": "Searching...",
+        "search-keyword": "Search keyword",
+        "reset": "Reset",
         "expense": "Expense",
         "investment": "Investment",
         "last_month_income": "Last Month Income",
