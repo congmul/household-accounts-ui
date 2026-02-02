@@ -120,12 +120,11 @@ export function AnalysisPage({ lng } : { lng: string }) {
             if(startDate > endDate){
                 const tmp = startDate; startDate = endDate; endDate = tmp;
             }
-            console.log({startDate, endDate})
+
             const months = monthsBetween(startDate, endDate);
             const allItems: TransactionItems[] = [];
             for(const m of months){
                 try{
-                    console.log(m)
                     const res = await fetchForMonth(m.year, m.month);
                     if(res && Array.isArray(res)){
                         // response could be Transaction[] or TransactionItems[] depending on API; normalize to TransactionItems[]
@@ -196,15 +195,15 @@ export function AnalysisPage({ lng } : { lng: string }) {
                 <div className="flex mb-4 gap-3 items-center">
                     <div className="menu-selector">
                         <select value={menu} onChange={e => setMenu(e.target.value as any)} className="border rounded px-2 py-1">
-                            <option value="expense">Expense</option>
-                            <option value="income">Income</option>
-                            <option value="investment">Invest</option>
+                            <option value="expense">{t('general.expense')}</option>
+                            <option value="income">{t('general.income')}</option>
+                            <option value="investment">{t('general.investment')}</option>
                         </select>
                     </div>
                     {menu === 'expense' && (
                         <label className="flex items-center gap-2">
                             <input type="checkbox" checked={pendingOnly} onChange={e => setPendingOnly(e.target.checked)} />
-                            <span>Pending only</span>
+                            <span>{t('general.pending-only')}</span>
                         </label>
                     )}
                 </div>
