@@ -14,6 +14,7 @@ export function SearchPage({ lng } : { lng: string }){
     const { defaultAccountBook } = useSelector((s: RootState) => s.accountBook);
     const { selectedDateStr } = useSelector((state:any) => state.calendar);
     const [ userInfo, _ ] = useSessionStorageState('userInfo', '');
+    const [ pendingOnly, setPendingOnly ] = useState<boolean>(false);
 
     // Filters
     const [ type, setType ] = useState<'all'|'expense'|'income'|'investment'>('all');
@@ -129,6 +130,10 @@ export function SearchPage({ lng } : { lng: string }){
                     (i.paymentMethod && i.paymentMethod.toLowerCase().includes(q))
                 ));
             }
+                // apply pending-only filter when requested (effective for expense transactions)
+                if(pendingOnly){
+                    filtered = filtered.filter(i => i.pending === true);
+                }
             // sort by date desc
             filtered.sort((a,b) => (new Date(b.date)).getTime() - (new Date(a.date)).getTime());
             setResults(filtered);
@@ -138,7 +143,7 @@ export function SearchPage({ lng } : { lng: string }){
         }finally{
             setIsLoading(false);
         }
-    }, [userInfo, defaultAccountBook, fetchForMonth]);
+    }, [userInfo, defaultAccountBook, fetchForMonth, pendingOnly]);
 
     // convert YYYY-MM (month input) to start-of-month ISO
     const monthToStartISO = (ym:string) => {
@@ -177,15 +182,20 @@ export function SearchPage({ lng } : { lng: string }){
         <div className="p-4">
             <div className="search-form p-1 rounded mb-4">
                 <div className="mb-3">
-                    <div>
-                        <label className="flex items-center gap-2">
-                            <span className="mr-2">{t('general.type')}</span>
-                            <select value={type} onChange={e => setType(e.target.value as any)} className="border rounded px-2 py-1">
+                    <div className="flex items-center gap-3">
+                        <label className="flex items-center pr-2 gap-2">
+                            <select value={type} onChange={e => setType(e.target.value as any)} className="border rounded px-3 py-1">
                                 <option value="all">{t('general.all')}</option>
                                 <option value="expense">{t('general.expense')}</option>
                                 <option value="income">{t('general.income')}</option>
                                 <option value="investment">{t('general.investment')}</option>
                             </select>
+                        </label>
+                        <label className="flex items-center gap-2">
+                            <input type="checkbox" checked={pendingOnly} onChange={e => {
+                                setPendingOnly(e.target.checked);
+                            }} />
+                            <span>{t('general.pending-only')}</span>
                         </label>
                     </div>
                     <div className="flex flex-col gap-3 my-3">
@@ -233,6 +243,8 @@ export function SearchPage({ lng } : { lng: string }){
                                                 <span>
                                                     {r.subcategory != null ? ` / ${r.subcategory}` : ''}
                                                 </span>
+                                                {r.category} / {r.subcategory}
+                                                {r.pending ? <span className="ml-2 inline-block bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded">Pending</span> : null}
                                             </div>
                                             <div className="text-sm text-slate-600">{r.note}</div>
                                             <div className="text-xs text-slate-500">{r.date.split('T')[0]}</div>
